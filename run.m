@@ -1,7 +1,9 @@
+function val = run(tf)
 clc
-clear
+%clear
+%tf = 0.3;
 Params_Calcs;
-
+vals = merv_ode_calcs(tf, tau_w);
 % Lagragian for x = [x, y, phi] and x_dot = [x_dot, y_dot, phi_dot]
 alpha = [0, 0, 0]; %[alpha_x, alpha_y, alpha_phi];   x
 lambda = [0, 0, 0]; %[lambda_xdot, lambda_ydot, lambda_phidot];  x_dot
@@ -11,6 +13,8 @@ t_span = linspace(0, tf, 100);
 phi_dot = 0*t_span;  % Array vector, phi_dot(i) corresponds to time(i)
 range = 1:length(t_span);
 
+h2 = vals(1);
+h1 = vals(2);
 % Rotational Velocity
 for i=range
     phi_dot(i) = MERV(phi_f, t_span(i), tf, tau_w, h2, h1);
@@ -68,6 +72,8 @@ s_factor = x_f/xf;
 alphax_scaled = s_factor*alpha_x;
 ax_0_t_scaled = s_factor*ax_0_t;
 
+alpha(1) = alphax_scaled;
+
 % Validating
 ic4 = [0, ax_0_t_scaled];
 [t_4,vx_4] = ode45(@(t,y) vx_ode(t, y, t_span, phi_dot, C1, C2, alphax_scaled), tspan, ic4, opts);
@@ -110,4 +116,35 @@ for l = range1
     omega = ang_vel(l);
     R_dot = omega*R_dot;
     lamda(l,:) = FindLambda(w2, A, xdot_vec', k2, w1, Q, xdotdot_vec', C, omega, R, R_dot);
+end
+
+% Finding lamda dot
+lamda_dot = DerLamda(lamda, tf);
+
+% Find heading angle
+u = 0*lamda_dot;
+t_step0 = t_span(2) - t_span(1);
+phi = phiCalc(phi_dot, ang_acc, t_step0);
+
+% Find control vector
+for m = range1
+    l_dot = lamda_dot(m,:);
+    omega = ang_vel(m);
+    p = phi(m);
+    R_d = R_dot_calc(p);
+    l = lamda(m,:);
+    u(m,:) = cVec(B, R, l_dot', alpha', omega, R_d, l', C, A, w2);
+end
+
+u_max = 1;
+u_max_obtd = max(u);
+u_max_obtd = max(u_max_obtd);
+
+if u_max_obtd > u_max
+    diff = u_max_obtd - u_max;
+    tf_max = tf*(1+diff);
+    val = tf_max;
+else
+    val = tf;
+end
 end
