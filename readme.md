@@ -1,2 +1,2 @@
 
-Clean version
+vy, vx and omega
