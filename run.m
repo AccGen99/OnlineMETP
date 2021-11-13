@@ -109,5 +109,5 @@ for l = range1
     xdotdot_vec = x_dot_dot(l,:);
     omega = ang_vel(l);
     R_dot = omega*R_dot;
-    lamda(l,:) = FindLambda(w2, A, xdot_vec', k2, w1, Q, x_dot_dot', C, omega, R, R_dot);
+    lamda(l,:) = FindLambda(w2, A, xdot_vec', k2, w1, Q, xdotdot_vec', C, omega, R, R_dot);
 end
