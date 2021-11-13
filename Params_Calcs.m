@@ -1,7 +1,9 @@
 % Initial & Final state values
 phi = [0, pi]; % phi(1) is initial and phi(2) is final
-xf = 4.55; % Final x-coordinate
-tf = 10;    % Apparently we're supposed to input this :/
+xf = 0.3; % Final x-coordinate
+tf = 0.89655;%1.0;    % Apparently we're supposed to input this :/
+zi = [0, 0, phi(1), 0, 0, 0]';
+zf = [xf, 0, phi(2), 0, 0, 0]';
 
 % System parameter values
 Fv = 0.0025; % (N.m/(rad/sec))
@@ -12,7 +14,7 @@ Mw = 0.133;     % Kg                Mass of one wheel
 L = 0.1255;     % m
 Vs = 24;        % V
 r = 0.03;       % m
-tw = 0.045;     % m                 Nobody got no idea what it is
+tw = 0.045;     % m                 Nobody got no idea what it is/does
 Ra = 7.9;       % ohm
 n = 1;          % Gear ratio - motor & wheel
 
@@ -31,8 +33,6 @@ Q = B'*B;
 A = M+Jw*Q/r^2;
 w1 = (Vs^2)/Ra;
 w2 = Kb*n*Vs/(Ra*r);
-zi = [0, 0, phi(1), 0, 0, 0]';
-zf = [xf, 0, phi(2), 0, 0, 0]';
 
 % For differential equation of phi-dot
 phi_f = phi(2);
@@ -43,3 +43,9 @@ k = (h3^2 - 3*(L^2)*h3*Kt*Kb*(n^2)/(Ra*(r^2)))/(Jc + (3*Jw*L^2)/r^2)^2;
 tau_w = 1/(k^0.5);
 h2 = sinh(tf/tau_w);
 h1 = 2*(1-cosh(tf/tau_w)) + h2;
+
+% For differential equation of x_dot
+R = [cos(phi(1)), -sin(phi(1)), 0; sin(phi(1)), cos(phi(1)), 0; 0, 0, 1];
+R_dot = [-sin(phi(1)), -cos(phi(1)), 0; cos(phi(1)), -sin(phi(1)), 0; 0, 0, 0];
+C1 = (C(1,1)/A(1,1))^2 - k2*w2*Q(1,1)*C(1,1)/(w1*A(1,1)^2);
+C2 = (k2^2)*Q(1,1)/(2*w1*A(1,1)^2);
