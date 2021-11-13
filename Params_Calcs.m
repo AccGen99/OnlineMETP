@@ -1,7 +1,6 @@
 % Initial & Final state values
 phi = [0, pi]; % phi(1) is initial and phi(2) is final
 xf = 0.3; % Final x-coordinate
-tf = 0.89655;%1.0;    % Apparently we're supposed to input this :/
 zi = [0, 0, phi(1), 0, 0, 0]';
 zf = [xf, 0, phi(2), 0, 0, 0]';
 
@@ -41,8 +40,9 @@ C4 = Q(3,3)*k2^2/(2*w1*(A(3,3))^2);
 h3 = 3*(L^2)*(Fv+Kt*Kb*(n^2)/Ra)/r^2;
 k = (h3^2 - 3*(L^2)*h3*Kt*Kb*(n^2)/(Ra*(r^2)))/(Jc + (3*Jw*L^2)/r^2)^2;
 tau_w = 1/(k^0.5);
-h2 = sinh(tf/tau_w);
-h1 = 2*(1-cosh(tf/tau_w)) + h2;
+
+%h2 = sinh(tf/tau_w);
+%h1 = 2*(1-cosh(tf/tau_w)) + h2;
 
 % For differential equation of x_dot
 R = [cos(phi(1)), -sin(phi(1)), 0; sin(phi(1)), cos(phi(1)), 0; 0, 0, 1];
